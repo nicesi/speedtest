@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        html,
+        body {
+            height: 90%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        #speedtest {
+            position: relative;
+        }
+
+        #speedtest #label {
+            position: absolute;
+            font-size: 10rem;
+            transform: translate(-50%, -50%);
+            color: #e31212;
+        }
+
+        #speedtest #label:after {
+            content: "Mbit/s";
+            position: absolute;
+            font-size: 35%;
+            bottom: 5px;
+            left: 50%;
+            transform: translate(-50%, 100%);
+        }
+
+        #region {
+            position: absolute;
+            font-size: 2rem;
+            transform: translate(-50%, -50%);
+            padding-top: 21rem;
+        }
+    </style>
+</head>
+
+<body onload="findRegion()">
+    <script>
+        var cities = [
+            ["fra-de", 50.116667, 8.683333, "Frankfurt"],
+            ["ams-nl", 52.366667, 4.9, "Amsterdam"],
+            ["par-fr", 48.856613, 2.352222, "Paris"],
+            ["lon-gb", 51.507222, -0.1275, "London"],
+            ["sel-kor", 37.566667, 126.966667, "Seoul"],
+            ["sgp", 1.283333, 103.833333, "Singapore"],
+            ["hnd-jp", 35.689722, 139.692222, "Tokyo"],
+            ["nj-us", 40.71274, -74.005974, "New York"],
+            ["tor-ca", 43.741667, -79.373333, "Toronto"],
+            ["il-us", 41.881944, -87.627778, "Chicago"],
+            ["ga-us", 33.755, -84.39, "Atlanta"],
+            ["wa-us", 47.609722, -122.333056, "Seattle"],
+            ["fl-us", 25.775278, -80.208889, "Miami"],
+            ["tx-us", 32.779167, -96.808889 , "Dallas"],
+            ["sjo-ca-us", 37.7775, -122.416389, "Silicon Valley"],
+            ["lax-ca-us", 34.05, -118.25, "Los Angeles"],
+            ["syd-au", -33.865, 151.209444, "Sydney"]
+        ];
+        var startTime
+        function updateProgress(evt) {
+            if (evt.lengthComputable) {
+                var percentComplete = (evt.loaded / evt.total) * 100;
+                label.innerText = (8 * percentComplete / ((new Date() - startTime) / 1000)).toFixed(1)
+                label.style = `color:rgb(${percentComplete*2.55|0},0,0)`
+            }
+        }
+
+        function Deg2Rad(deg) {
+            return deg * Math.PI / 180;
+        }
+
+        function PythagorasEquirectangular(lat1, lon1, lat2, lon2) {
+            lat1 = Deg2Rad(lat1);
+            lat2 = Deg2Rad(lat2);
+            lon1 = Deg2Rad(lon1);
+            lon2 = Deg2Rad(lon2);
+            var R = 6371; // km
+            var x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2);
+            var y = (lat2 - lat1);
+            var d = Math.sqrt(x * x + y * y) * R;
+            return d;
+        }
+
+        var findRegion = function () {
+            var req = new XMLHttpRequest();
+            req.open("GET", "https://freegeoip.app/json/", true);
+            req.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText);
+
+                    var minDif = 99999;
+                    var closest;
+
+                    for (index = 0; index < cities.length; ++index) {
+                        var dif = PythagorasEquirectangular(data.latitude, data.longitude, cities[index][1], cities[index][2]);
+                        if (dif < minDif) {
+                            closest = index;
+                            minDif = dif;
+                        }
+                    }
+
+                    region.innerText = cities[closest][3]
+                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
+                    checkDownload(fileURL)
+                }
+            };
+            req.send();
+        }
+
+        var checkDownload = function (fileURL) {
+            var request = new XMLHttpRequest();
+            request.onprogress = updateProgress;
+            request.open('GET', fileURL, true);
+            startTime = (new Date());
+            request.onreadystatechange = function () {
+                if (request.readyState == 1) {
+                    startTime = (new Date());
+                }
+                if (this.readyState == 4) {
+                    label.style = "color:black"
+                    setInterval(()=>label.style="color:red",1000)
+                }
+            };
+            request.send();
+        };
+    </script>
+    <div id="speedtest">
+        <div id="label">0</div>
+        <div id="region"></div>
+    </div>
+</body>
+
+</html>
