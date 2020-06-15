@@ -70,7 +70,7 @@
         function updateProgress(evt) {
             if (evt.lengthComputable) {
                 var percentComplete = (evt.loaded / evt.total) * 100;
-                label.innerText = (8 * percentComplete / ((new Date() - startTime) / 1000)).toFixed(1)
+                label.innerText = (8*evt.loaded/1024/1024/((new Date() - startTime) / 1000)).toFixed(1)
                 label.style = `color:rgb(${percentComplete*2.55|0},0,0)`
             }
         }
