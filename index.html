@@ -69,9 +69,9 @@
         var startTime
         function updateProgress(evt) {
             if (evt.lengthComputable) {
-                var percentComplete = (evt.loaded / evt.total) * 100;
-                label.innerText = (8*evt.loaded/1024/1024/((new Date() - startTime) / 1000)).toFixed(1)
-                label.style = `color:rgb(${percentComplete*2.55|0},0,0)`
+                var elapsedSec = (new Date() - startTime) / 1000
+                label.innerText = (8 * evt.loaded / 1024 / 1024 / elapsedSec).toFixed(1)
+                label.style = `color:rgb(${elapsedSec * 17 | 0},0,0)`
             }
         }
 
@@ -110,8 +110,10 @@
                     }
 
                     region.innerText = cities[closest][3]
-                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
+                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.1000MB.bin`
                     checkDownload(fileURL)
+                } else if (this.status == 0) {
+                    alert("You must disable ad blocker for this site !")
                 }
             };
             req.send();
@@ -132,6 +134,8 @@
                 }
             };
             request.send();
+            var abort = () => request.abort()
+            setInterval(abort, 15000)
         };
     </script>
     <div id="speedtest">
