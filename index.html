@@ -61,7 +61,7 @@
             ["ga-us", 33.755, -84.39, "Atlanta"],
             ["wa-us", 47.609722, -122.333056, "Seattle"],
             ["fl-us", 25.775278, -80.208889, "Miami"],
-            ["tx-us", 32.779167, -96.808889 , "Dallas"],
+            ["tx-us", 32.779167, -96.808889, "Dallas"],
             ["sjo-ca-us", 37.7775, -122.416389, "Silicon Valley"],
             ["lax-ca-us", 34.05, -118.25, "Los Angeles"],
             ["syd-au", -33.865, 151.209444, "Sydney"]
@@ -75,20 +75,8 @@
             }
         }
 
-        function Deg2Rad(deg) {
-            return deg * Math.PI / 180;
-        }
-
-        function PythagorasEquirectangular(lat1, lon1, lat2, lon2) {
-            lat1 = Deg2Rad(lat1);
-            lat2 = Deg2Rad(lat2);
-            lon1 = Deg2Rad(lon1);
-            lon2 = Deg2Rad(lon2);
-            var R = 6371; // km
-            var x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2);
-            var y = (lat2 - lat1);
-            var d = Math.sqrt(x * x + y * y) * R;
-            return d;
+        function primitiveDist(lat1, lon1, lat2, lon2) {
+            return Math.abs(lat1 - lat2 + lon1 - lon2)
         }
 
         var findRegion = function () {
@@ -102,7 +90,7 @@
                     var closest;
 
                     for (index = 0; index < cities.length; ++index) {
-                        var dif = PythagorasEquirectangular(data.latitude, data.longitude, cities[index][1], cities[index][2]);
+                        var dif = primitiveDist(data.latitude, data.longitude, cities[index][1], cities[index][2]);
                         if (dif < minDif) {
                             closest = index;
                             minDif = dif;
@@ -130,7 +118,7 @@
                 }
                 if (this.readyState == 4) {
                     label.style = "color:black"
-                    setInterval(()=>label.style="color:red",1000)
+                    setInterval(() => label.style = "color:red", 1000)
                 }
             };
             request.send();
