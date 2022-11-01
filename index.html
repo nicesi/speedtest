@@ -186,7 +186,10 @@
                     var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
                     checkDownload(fileURL)
                 }, function(error) {
-                    alert('Error! Error code: ' + error.code);         
+                    if(error === 1){
+                        alert("You can't test without location permission!")
+                    }
+                    console.log('Error! Error code: ' + error.code);         
                 },{timeout:5000});
             }else{
                 document.querySelector('.permission-granted-button').style.display = 'block';
