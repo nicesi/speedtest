@@ -185,7 +185,9 @@
                     region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="https://raw.githubusercontent.com/ramazansancar/nicesi-speedtest/master/assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
                     var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
                     checkDownload(fileURL)
-                });
+                }, function(error) {
+                    alert('Error! Error code: ' + error.code);         
+                },{timeout:5000});
             }else{
                 document.querySelector('.permission-granted-button').style.display = 'block';
                 // set latitude and longitude to default values if Geolocation API is not supported
@@ -193,6 +195,20 @@
                 longitude = "38.6270";
                 alert('Geolocation is not supported by this browser!')
                 console.log("Geolocation is not supported by this browser.");
+                var minDif = 99999;
+                    var closest;
+
+                    for (index = 0; index < cities.length; ++index) {
+                        var dif = primitiveDist(latitude, longitude, cities[index][1], cities[index][2]);
+                        if (dif < minDif) {
+                            closest = index;
+                            minDif = dif;
+                        }
+                    }
+
+                    region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="https://raw.githubusercontent.com/ramazansancar/nicesi-speedtest/master/assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
+                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
+                    checkDownload(fileURL)
             }
         }
 
