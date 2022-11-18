@@ -183,7 +183,7 @@
                     }
 
                     region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="https://raw.githubusercontent.com/ramazansancar/nicesi-speedtest/master/assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
-                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
+                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.1000MB.bin`
                     checkDownload(fileURL)
                 }, function(error) {
                     if(error.code === 1){
