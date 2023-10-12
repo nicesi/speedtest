@@ -107,14 +107,15 @@
         Speed Test Start
     </div>
     <script>
+
         document.querySelector('.permission-granted-button').addEventListener('click', () => {
             navigator.geolocation.watchPosition(findRegion(), errorCallback(), optionsObject);
         });
 
         let latitude, longitude;
         var startTime
+
         // Region List Source: https://fra-de-ping.vultr.com/ (Server list Select Box)
-        // Coordinates Source: https://positionstack.com/
         var cities = [
             ["blr-in", 12.96557, 77.60625, "Bangalore (India)","in"],
             ["del-in", 28.557163, 77.163665, "Delhi (India)","in"],
@@ -171,11 +172,17 @@
                     latitude = location.coords.latitude
                     longitude = location.coords.longitude
 
+            var req = new XMLHttpRequest();
+            req.open("GET", "https://ipapi.co/json/", true);
+            req.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText);
+
                     var minDif = 99999;
                     var closest;
 
                     for (index = 0; index < cities.length; ++index) {
-                        var dif = primitiveDist(latitude, longitude, cities[index][1], cities[index][2]);
+                        var dif = primitiveDist(data.latitude, data.longitude, cities[index][1], cities[index][2]);
                         if (dif < minDif) {
                             closest = index;
                             minDif = dif;
