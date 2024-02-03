@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta name="title" content="Internet Speed Test | Ramazan Sancar" />
+    <meta name="description" content="HTML5 Internet Speed Test on Web Browser by geolocation" />
+    <meta name="google-site-verification" content="" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.ramazansancar.com.tr/res/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://www.ramazansancar.com.tr/res/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.ramazansancar.com.tr/res/fav/favicon-16x16.png">
+    <title>Internet Speed Test | Ramazan Sancar</title>
+    <link rel="canonical" href="https://speedtest.ramazansancar.com.tr/" />
+    <style>
+        html,
+        body {
+            height: 90%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        #speedtest {
+            position: absolute;
+            top: 45%;
+            left: 45%;
+            width: 0;
+        }
+
+        #speedtest #label {
+            position: absolute;
+            font-size: 10rem;
+            transform: translate(-50%, -50%);
+            color: #e31212;
+        }
+
+        #speedtest #label:after {
+            content: "Mbit/s";
+            position: absolute;
+            font-size: 35%;
+            bottom: 5px;
+            left: 50%;
+            transform: translate(-50%, 100%);
+        }
+
+        #region {
+            /*position: absolute;*/
+            font-size: 2rem;
+            transform: translate(-50%, -50%);
+            margin-top: 12rem;
+            width: 400px;
+            text-align: center;
+        }
+
+        #second {
+            width: 400px;
+            transform: translate(-50%, -50%);
+        }
+
+        .filesize {
+            width: 150px;
+            transform: translate(-50%, -50%);
+        }
+
+        .info {
+            width: 400px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .button {
+            display: inline-block;
+            border: 0;
+            outline: 0;
+            padding: 14px 40px;
+            border-radius: 3px;
+            background-color: #6C63FF;
+            color: #fff;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all .24s ease;
+            transform: translate(-50%, -260%);
+        }
+        .button:hover {
+            box-shadow: 0px 5px 3px rgba(108, 99, 255, 0.24);
+        }
+        
+        .flag{
+            border-radius: 4px;
+            vertical-align: middle;
+            height: 24px;
+            width: 32px;
+            background-size: 108px 24px;
+            margin-bottom: 0;
+        }
+        .green{
+            color:green;
+        }
+    </style>
+</head>
+
+<body onload="findRegion()">
+    <div id="speedtest">
+        <div id="label">0</div>
+        <div id="region"></div>
+        <div id="second">Time: 00:00</div>
+        <div class="filesize">File Size: 1 GB</div>
+        <div class="info">For speed testing, <a href="https://vultr.com">vultr.com</a> servers are used.</div>
+        <div class="info">Source Code: <a href="https://github.com/ramazansancar/speedtest.ramazansancar.com.tr">Github</a></div>
+    </div>
+    <div class="button permission-granted-button">
+        Speed Test Start
+    </div>
+    <script>
+        document.querySelector('.permission-granted-button').addEventListener('click', () => {
+            checkSpeed();
+            document.querySelector('.permission-granted-button').style.display = 'none';
+        });
+
+        let latitude, longitude;
+        var startTime
+
+        // Region List Source: https://fra-de-ping.vultr.com/ (Server list Select Box)
+        const cities = [
+            // Asia
+            ["blr-in", 12.96557, 77.60625, "Bangalore (India)","in"],
+            ["del-in", 28.557163, 77.163665, "Delhi (India)","in"],
+            ["bom-in", 19.131577, 72.891418, "Mumbai (India)","in"],
+            ["osk-jp", 34.693738, 135.502165, "Osaka (Japan)","jp"],
+            ["sel-kor", 37.539619, 127.009676, "Seoul (South Korea)","kr"],
+            ["sgp", 1.316382, 103.833828, "Singapore","sg"],
+            ["tlv-il", 32.0853, 34.781769, "Tel Aviv (Israel)","il"],
+            ["hnd-jp", 35.695126, 139.75391, "Tokyo (Japan)","jp"],
+
+            // Australia
+            ["mel-au", -37.825071, 144.978682, "Melbourne (Australia)","au"],
+            ["syd-au", -33.868633, 151.209421, "Sydney (Australia)","au"],
+
+            // Europe
+            ["ams-nl", 52.37243, 4.89973, "Amsterdam (Netherlands)","nl"],
+            ["fra-de", 50.041821, 8.584764, "Frankfurt (Germany)","de"],
+            ["lon-gb", 51.509648, -0.099076, "London (United Kingdom)","gb"],
+            ["mad-es", 40.429913, -3.669245, "Madrid (Spain)","es"],
+            ["par-fr", 48.858705, 2.342865, "Paris (France)","fr"],
+            ["sto-se", 59.275254, 18.035164, "Stockholm (Sweden)","se"],
+            ["waw-pl", 52.237695, 21.005427, "Warsaw (Poland)","pl"],
+
+            // North America
+            ["ga-us", 33.769805, -84.414581, "Atlanta (United States)","us"],
+            ["il-us", 41.87897, -87.66063, "Chicago (United States)","us"],
+            ["tx-us", 32.736212, -96.784359, "Dallas (United States)","us"],
+            ["hon-hi-us", 21.40572, -157.789396, "Honolulu (United States)","us"],
+            ["lax-ca-us", 34.080285, -118.361744, "Los Angeles (United States)","us"],
+            ["mex-mx", 19.371422, -99.150344, "Mexico City (Mexico)","mx"],
+            ["fl-us", 10.96389, -74.79639, "Miami (Colombia)","us"],
+            ["nj-us", 39.66502, -74.738208, "New Jersey (United States)","us"],
+            ["wa-us", 47.673455, -122.331537, "Seattle (United States)","us"],
+            ["sjo-ca-us", 37.247681, -121.773869, "Silicon Valley (United States)","us"],
+            ["tor-ca", 43.64877, -79.38171, "Toronto (Canada)","ca"],
+
+            // South America
+            ["scl-cl", -33.448891, -70.669266, "Santiago (Chile)","cl"],
+            ["sao-br", -23.570533, -46.663713, "São Paulo (Brazil)","br"]
+        ];
+
+        var millisToMinutesAndSeconds = (millis) => {
+            var minutes = (Math.floor(millis / 60000)).toFixed(0);
+            var seconds = ((millis % 60000) / 1000).toFixed(0);
+            var ms = ((millis % 6000)/10).toFixed(0);
+            return minutes + ":" + (seconds < 10 ? '0' : '') + seconds + '.'+ ms;
+        }
+        
+        var updateProgress = (evt) => {
+            if(evt.lengthComputable){
+                var elapsedSec = (new Date() - startTime) / 1000
+                label.innerText = (8 * evt.loaded / 1024 / 1024 / elapsedSec).toFixed(1)
+                label.style = `color:rgb(${elapsedSec * 17 | 0},0,0)`
+            }
+        }
+
+        var primitiveDist = (lat1, lon1, lat2, lon2) => {
+            return Math.abs(lat1 - lat2 + lon1 - lon2)
+        }
+
+        var checkSpeed = () => {
+            if(latitude !== undefined || longitude !== undefined){
+                findRegion()
+            }else{
+                navigator.geolocation.getCurrentPosition((location) => {
+                    //document.querySelector('.permission-granted-button').style.display = 'none';
+                    latitude = location.coords.latitude
+                    longitude = location.coords.longitude
+                    console.log('Latitude: ' + latitude + ' Longitude: ' + longitude);
+                }, errorCallback);
+            }
+        }
+
+        var findRegion = () => {
+            if((window.location.protocol == "https:" || window.location.protocol == "http:") && navigator.geolocation){
+                if(latitude !== undefined || longitude !== undefined){
+                    var minDif = 99999;
+                    var closest;
+
+                    for (index = 0; index < cities.length; ++index) {
+                        //console.log(cities[index])
+                        // Icon Check
+                        //region.innerHTML += '<img src="assets/flags/'+cities[index][4]+'.svg" class="flag">'+cities[index][3]+'<br>';
+                        var dif = primitiveDist(latitude, longitude, cities[index][1], cities[index][2]);
+                        if (dif < minDif) {
+                            closest = index;
+                            minDif = dif;
+                        }
+                    }
+
+                    region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
+                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.1000MB.bin`
+                    checkDownload(fileURL);
+                }
+            }else{
+                document.querySelector('.permission-granted-button').style.display = 'block';
+                // set latitude and longitude to default values if Geolocation API is not supported
+                latitude = "90.1994";
+                longitude = "38.6270";
+                alert('Geolocation is not supported by this browser!')
+                console.log("Geolocation is not supported by this browser.");
+                var minDif = 99999;
+                    var closest;
+
+                    for (index = 0; index < cities.length; ++index) {
+                        var dif = primitiveDist(latitude, longitude, cities[index][1], cities[index][2]);
+                        if (dif < minDif) {
+                            closest = index;
+                            minDif = dif;
+                        }
+                    }
+
+                    region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="https://raw.githubusercontent.com/ramazansancar/nicesi-speedtest/master/assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
+                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
+                    checkDownload(fileURL)
+            }
+        }
+
+        var errorCallback = async (error) => {
+            navigator.geolocation.watchPosition(function(position) {
+                console.log("i'm tracking you!");
+            }, async (error) => {
+                if (error.code == error.PERMISSION_DENIED){
+                    console.log("you denied me :-(");
+                    if(latitude === undefined || longitude === undefined){
+                        await fetch('https://ipapi.co/json/')
+                        .then(response => response.json())
+                        .then(data => {
+                            latitude = data.latitude
+                            longitude = data.longitude
+                            console.log('Latitude: ' + latitude + ' Longitude: ' + longitude);
+                            checkSpeed();
+                        })
+                        .catch(error => console.error('Error:', error));
+                    }else{
+                        checkSpeed();
+                    }
+                }
+            });
+        };
+
+
+        var checkDownload = function (fileURL) {
+            var request = new XMLHttpRequest();
+            request.onprogress = updateProgress;
+            request.open('GET', fileURL, true);
+            startTime = (new Date());
+            let timer = setInterval(() => {
+                second.innerText = `Time: ${millisToMinutesAndSeconds((new Date() - startTime))}`;
+            }, 5);
+            request.onreadystatechange = function () {
+                if (request.readyState == 1) {
+                    startTime = (new Date());
+                }else if(this.readyState == 4){
+                    label.style = "color:black"
+                    setInterval(() => label.style = "color:red", 1000)
+                    second.innerText = `Time: ${millisToMinutesAndSeconds((new Date() - startTime))} (Download Completed)`;
+                    clearTimeout(timer);
+                    document.querySelector('.permission-granted-button').style.display = 'block';
+                }
+            };
+
+            request.send();
+            var abort = () => {
+                request.abort()
+            }
+            setInterval(abort, 15000)
+            
+            /*else if (this.readyState == 3){
+            //var abort = () => request.abort()
+            }*/
+        };
+    </script>
+</body>
+</html>

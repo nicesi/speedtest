@@ -1,0 +1,45 @@
+{
+  "name": "speedtest.ramazansancar.com.tr",
+  "version": "1.0.0",
+  "description": "[https://speedtest.ramazansancar.com.tr](https://speedtest.ramazansancar.com.tr)",
+  "scripts": {
+    "start": "http-server ./dist",
+    "build": "gulp",
+    "dev": "nodemon --exec \"npm run build && npm run start\"",
+    "devCom": "npm run build && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramazansancar/speedtest.ramazansancar.com.tr.git"
+  },
+  "author": "ramazansancar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ramazansancar/speedtest.ramazansancar.com.tr/issues"
+  },
+  "homepage": "https://github.com/ramazansancar/speedtest.ramazansancar.com.tr#readme",
+  "dependencies": {
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-csso": "^4.0.1",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify-es": "^2.0.0",
+    "http-server": "^0.12.3",
+    "nodemon": "^2.0.12",
+    "run-sequence": "^2.2.1"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "nodemonConfig": {
+    "ignore": [
+      "dist/*"
+    ],
+    "ext": "*"
+  }
+}

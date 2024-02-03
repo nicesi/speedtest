@@ -1,214 +1,290 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <meta name="title" content="Internet Speed Test | Ramazan Sancar" />
+    <meta name="description" content="HTML5 Internet Speed Test on Web Browser by geolocation" />
+    <meta name="google-site-verification" content="" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.ramazansancar.com.tr/res/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://www.ramazansancar.com.tr/res/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.ramazansancar.com.tr/res/fav/favicon-16x16.png">
+    <title>Internet Speed Test | Ramazan Sancar</title>
+    <link rel="canonical" href="https://speedtest.ramazansancar.com.tr/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hız Testi</title>
     <style>
-        html,
         body {
-            height: 90%;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-family: Helvetica, Arial, sans-serif;
-        }
-
-        #speedtest {
-            position: absolute;
-            top: 45%;
-            left: 45%;
-            width: 0;
-        }
-
-        #speedtest #label {
-            position: absolute;
-            font-size: 10rem;
-            transform: translate(-50%, -50%);
-            color: #e31212;
-        }
-
-        #speedtest #label:after {
-            content: "Mbit/s";
-            position: absolute;
-            font-size: 35%;
-            bottom: 5px;
-            left: 50%;
-            transform: translate(-50%, 100%);
-        }
-
-        #region {
-            /*position: absolute;*/
-            font-size: 2rem;
-            transform: translate(-50%, -50%);
-            margin-top: 12rem;
-            width: 400px;
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
             text-align: center;
         }
-
-        #second {
-            width: 100px;
-            transform: translate(-50%, -50%);
+        h1 {
+            margin: 0;
         }
-
-        .filesize {
-            width: 150px;
-            transform: translate(-50%, -50%);
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .info {
-            width: 200px;
-            height: 8px;
-            transform: translate(-50%, -50%);
+        #speed-test {
+            text-align: center;
+            margin-top: 30px;
         }
-
-        .button {
-            display: inline-block;
-            border: 0;
-            outline: 0;
-            padding: 14px 40px;
-            border-radius: 3px;
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            /*background-color: #4CAF50;*/
             background-color: #6C63FF;
             color: #fff;
-            font-weight: 300;
+            border: none;
             cursor: pointer;
-            transition: all .24s ease;
-            transform: translate(-50%, -260%);
         }
-        .button:hover {
-            box-shadow: 0px 5px 3px rgba(108, 99, 255, 0.24);
+        button:hover {
+            /*background-color: #45a049;*/
+            background-color: #4C43FF;
         }
-        
-        .flag{
-            border-radius: 4px;
-            vertical-align: middle;
-            height: 24px;
-            width: 32px;
-            background-size: 108px 24px;
-            margin-bottom: 0;
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
         }
-        .green{
-            color:green;
+        .info {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info img {
+            width: 30px;
+            height: auto;
+            margin-right: 10px;
+        }
+        .info span {
+            font-size: 14px;
+        }
+        .info .sponsor {
+            font-size: 12px;
+            justify-content: center !important;
+        }
+        .info .source {
+            font-size: 12px;
+            justify-content: center !important;
         }
     </style>
 </head>
-
-<body onload="findRegion()">
-    <div id="speedtest">
-        <div id="label">0</div>
-        <div id="region"></div>
-        <div id="second">00:00</div>
-        <div class="filesize">File Size: 1 GB</div>
-        <div class="info">For speed testing, <a href="https://vultr.com">vultr.com</a> servers are used.</div>
-    </div>
-    <div class="button permission-granted-button">
-        Speed Test Start
+<body>
+    <header>
+        <h1>Hız Testi</h1>
+    </header>
+    <div class="container">
+        <div id="speed-test">
+            <button id="button">Start Test</button>
+            <div id="result"></div>
+        </div>
+        <div class="info">
+            <div>
+                <img id="location-flag" src="" alt="">
+                <span id="location">Server Location: -</span>
+            </div>
+        </div>
+        <div class="info">
+            <span id="file-size">File Size: 1GB</span>
+            <span id="time">Time: 0:00.00</span>
+        </div>
+        <div class="info">
+            <span id="sponsor">-</span>
+        </div>
+        <div class="info">
+            <span id="source">Source Code: <a href="https://github.com/ramazansancar/speedtest.ramazansancar.com.tr">GH:ramazansancar/speedtest.ramazansancar.com.tr</a></span>
+        </div>
     </div>
     <script>
-
-        document.querySelector('.permission-granted-button').addEventListener('click', () => {
-            navigator.geolocation.watchPosition(findRegion(), errorCallback(), optionsObject);
+        document.querySelector('#button').addEventListener('click', () => {
+            checkSpeed();
+            document.querySelector('#button').style.display = 'none';
         });
 
         let latitude, longitude;
         var startTime
 
-        // Region List Source: https://fra-de-ping.vultr.com/ (Server list Select Box)
-        var cities = [
-            ["blr-in", 12.96557, 77.60625, "Bangalore (India)","in"],
-            ["del-in", 28.557163, 77.163665, "Delhi (India)","in"],
-            ["bom-in", 19.131577, 72.891418, "Mumbai (India)","in"],
-            ["sel-kor", 37.539619, 127.009676, "Seoul (South Korea)","kr"],
-            ["sgp", 1.316382, 103.833828, "Singapore","sg"],
-            ["hnd-jp", 35.695126, 139.75391, "Tokyo (Japan)","jp"],
-            ["mel-au", -37.825071, 144.978682, "Melbourne (Australia)","au"],
-            ["syd-au", -33.868633, 151.209421, "Sydney (Australia)","au"],
-            ["ams-nl", 52.37243, 4.89973, "Amsterdam (Netherlands)","nl"],
-            ["fra-de", 50.041821, 8.584764, "Frankfurt (Germany)","de"],
-            ["lon-gb", 51.509648, -0.099076, "London (United Kingdom)","gb"],
-            ["mad-es", 40.429913, -3.669245, "Madrid (Spain)","es"],
-            ["par-fr", 48.858705, 2.342865, "Paris (France)","fr"],
-            ["sto-se", 59.275254, 18.035164, "Stockholm (Sweden)","se"],
-            ["waw-pl", 52.237695, 21.005427, "Warsaw (Poland)","pl"],
-            ["ga-us", 33.769805, -84.414581, "Atlanta (United States)","us"],
-            ["il-us", 41.87897, -87.66063, "Chicago (United States)","us"],
-            ["tx-us", 32.736212, -96.784359, "Dallas (United States)","us"],
-            ["hon-hi-us", 21.40572, -157.789396, "Honolulu (United States)","us"],
-            ["lax-ca-us", 34.080285, -118.361744, "Los Angeles (United States)","us"],
-            ["mex-mx", 19.371422, -99.150344, "Mexico City (Mexico)","mx"],
-            ["fl-us", 10.96389, -74.79639, "Miami (Colombia)","us"],
-            ["nj-us", 39.66502, -74.738208, "New Jersey (United States)","us"],
-            ["wa-us", 47.673455, -122.331537, "Seattle (United States)","us"],
-            ["sjo-ca-us", 37.247681, -121.773869, "Silicon Valley (United States)","us"],
-            ["tor-ca", 43.64877, -79.38171, "Toronto (Canada)","ca"],
-            ["sao-br", -23.570533, -46.663713, "São Paulo (Brazil)","br"]
+        const testFileName = {
+            vultr: "vultr.com.1000MB.bin",
+        }
+
+        // Region List Source: https://fra-de-ping.vultr.com/ (Server list Select Box) [Vultr.com]
+        const locations = [
+            /*
+            ["subdomain-url", "latitude", "longitude", "City Name (Country)", "country-code (for flag icon)", "test-file-name", "file-provider"]
+            */
+            // Vultr
+            ["https://blr-in-ping.vultr.com/", 12.96557, 77.60625, "Bangalore (India)","in",testFileName.vultr,"vultr.com"],
+            ["https://del-in-ping.vultr.com/", 28.557163, 77.163665, "Delhi (India)","in",testFileName.vultr,"vultr.com"],
+            ["https://bom-in-ping.vultr.com/", 19.131577, 72.891418, "Mumbai (India)","in",testFileName.vultr,"vultr.com"],
+            ["https://osk-jp-ping.vultr.com/", 34.693738, 135.502165, "Osaka (Japan)","jp",testFileName.vultr,"vultr.com"],
+            ["https://sel-kor-ping.vultr.com/", 37.539619, 127.009676, "Seoul (South Korea)","kr",testFileName.vultr,"vultr.com"],
+            ["https://sgp-ping.vultr.com/", 1.316382, 103.833828, "Singapore","sg",testFileName.vultr,"vultr.com"],
+            ["https://tlv-il-ping.vultr.com/", 32.0853, 34.781769, "Tel Aviv (Israel)", "il",testFileName.vultr,"vultr.com"],
+            ["https://hnd-jp-ping.vultr.com/", 35.695126, 139.75391, "Tokyo (Japan)","jp",testFileName.vultr,"vultr.com"],
+            ["https://mel-au-ping.vultr.com/", -37.825071, 144.978682, "Melbourne (Australia)","au",testFileName.vultr,"vultr.com"],
+            ["https://syd-au-ping.vultr.com/", -33.868633, 151.209421, "Sydney (Australia)","au",testFileName.vultr,"vultr.com"],
+            ["https://ams-nl-ping.vultr.com/", 52.37243, 4.89973, "Amsterdam (Netherlands)","nl",testFileName.vultr,"vultr.com"],
+            ["https://fra-de-ping.vultr.com/", 50.041821, 8.584764, "Frankfurt (Germany)","de",testFileName.vultr,"vultr.com"],
+            ["https://lon-gb-ping.vultr.com/", 51.509648, -0.099076, "London (United Kingdom)","gb",testFileName.vultr,"vultr.com"],
+            ["https://mad-es-ping.vultr.com/", 40.429913, -3.669245, "Madrid (Spain)","es",testFileName.vultr,"vultr.com"],
+            ["https://par-fr-ping.vultr.com/", 48.858705, 2.342865, "Paris (France)","fr",testFileName.vultr,"vultr.com"],
+            ["https://sto-se-ping.vultr.com/", 59.275254, 18.035164, "Stockholm (Sweden)","se",testFileName.vultr,"vultr.com"],
+            ["https://waw-pl-ping.vultr.com/", 52.237695, 21.005427, "Warsaw (Poland)","pl",testFileName.vultr,"vultr.com"],
+            ["https://ga-us-ping.vultr.com/", 33.769805, -84.414581, "Atlanta (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://il-us-ping.vultr.com/", 41.87897, -87.66063, "Chicago (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://tx-us-ping.vultr.com/", 32.736212, -96.784359, "Dallas (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://hon-hi-us-ping.vultr.com/", 21.40572, -157.789396, "Honolulu (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://lax-ca-us-ping.vultr.com/", 34.080285, -118.361744, "Los Angeles (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://mex-mx-ping.vultr.com/", 19.371422, -99.150344, "Mexico City (Mexico)","mx",testFileName.vultr,"vultr.com"],
+            ["https://fl-us-ping.vultr.com/", 10.96389, -74.79639, "Miami (Colombia)","us",testFileName.vultr,"vultr.com"],
+            ["https://nj-us-ping.vultr.com/", 39.66502, -74.738208, "New Jersey (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://wa-us-ping.vultr.com/", 47.673455, -122.331537, "Seattle (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://sjo-ca-us-ping.vultr.com/", 37.247681, -121.773869, "Silicon Valley (United States)","us",testFileName.vultr,"vultr.com"],
+            ["https://tor-ca-ping.vultr.com/", 43.64877, -79.38171, "Toronto (Canada)","ca",testFileName.vultr,"vultr.com"],
+            ["https://scl-cl-ping.vultr.com/", -33.448891, -70.669266, "Santiago (Chile)","cl",testFileName.vultr,"vultr.com"],
+            ["https://sao-br-ping.vultr.com/", -23.570533, -46.663713, "São Paulo (Brazil)","br",testFileName.vultr,"vultr.com"]
+        ]
+
+        const cities = [
+            /*
+            ["subdomain-code", "latitude", "longitude", "City Name", "country-code", "provider"]
+            */
+            
+            // Vultr
+            // Asia
+            ["blr-in", 12.96557, 77.60625, "Bangalore (India)","in","vultr.com"],
+            ["del-in", 28.557163, 77.163665, "Delhi (India)","in","vultr.com"],
+            ["bom-in", 19.131577, 72.891418, "Mumbai (India)","in","vultr.com"],
+            ["osk-jp", 34.693738, 135.502165, "Osaka (Japan)","jp","vultr.com"],
+            ["sel-kor", 37.539619, 127.009676, "Seoul (South Korea)","kr","vultr.com"],
+            ["sgp", 1.316382, 103.833828, "Singapore","sg","vultr.com"],
+            ["tlv-il", 32.0853, 34.781769, "Tel Aviv (Israel)","il","vultr.com"],
+            ["hnd-jp", 35.695126, 139.75391, "Tokyo (Japan)","jp","vultr.com"],
+
+            // Australia
+            ["mel-au", -37.825071, 144.978682, "Melbourne (Australia)","au","vultr.com"],
+            ["syd-au", -33.868633, 151.209421, "Sydney (Australia)","au","vultr.com"],
+
+            // Europe
+            ["ams-nl", 52.37243, 4.89973, "Amsterdam (Netherlands)","nl","vultr.com"],
+            ["fra-de", 50.041821, 8.584764, "Frankfurt (Germany)","de","vultr.com"],
+            ["lon-gb", 51.509648, -0.099076, "London (United Kingdom)","gb","vultr.com"],
+            ["mad-es", 40.429913, -3.669245, "Madrid (Spain)","es","vultr.com"],
+            ["par-fr", 48.858705, 2.342865, "Paris (France)","fr","vultr.com"],
+            ["sto-se", 59.275254, 18.035164, "Stockholm (Sweden)","se","vultr.com"],
+            ["waw-pl", 52.237695, 21.005427, "Warsaw (Poland)","pl","vultr.com"],
+
+            // North America
+            ["ga-us", 33.769805, -84.414581, "Atlanta (United States)","us","vultr.com"],
+            ["il-us", 41.87897, -87.66063, "Chicago (United States)","us","vultr.com"],
+            ["tx-us", 32.736212, -96.784359, "Dallas (United States)","us","vultr.com"],
+            ["hon-hi-us", 21.40572, -157.789396, "Honolulu (United States)","us","vultr.com"],
+            ["lax-ca-us", 34.080285, -118.361744, "Los Angeles (United States)","us","vultr.com"],
+            ["mex-mx", 19.371422, -99.150344, "Mexico City (Mexico)","mx","vultr.com"],
+            ["fl-us", 10.96389, -74.79639, "Miami (Colombia)","us","vultr.com"],
+            ["nj-us", 39.66502, -74.738208, "New Jersey (United States)","us","vultr.com"],
+            ["wa-us", 47.673455, -122.331537, "Seattle (United States)","us","vultr.com"],
+            ["sjo-ca-us", 37.247681, -121.773869, "Silicon Valley (United States)","us","vultr.com"],
+            ["tor-ca", 43.64877, -79.38171, "Toronto (Canada)","ca","vultr.com"],
+
+            // South America
+            ["scl-cl", -33.448891, -70.669266, "Santiago (Chile)","cl","vultr.com"],
+            ["sao-br", -23.570533, -46.663713, "São Paulo (Brazil)","br","vultr.com"]
+
+
+            // Hetzner
+
+            // OVH Cloud
+            
+            /*[DE] Limburg - 10 Gb/s - OVH.com
+            [FR] Roubaix - 10 Gb/s - OVH.com
+            [FR] Strasbourg - 10 Gb/s - OVH.com
+            [CA] Beauharnois - 10 Gb/s - OVH.com
+            [FR] Gravelines - 10 Gb/s - OVH.com
+            [GB] Erith - 10 Gb/s - OVH.com
+            [PL] Warsaw - 10 Gb/s - OVH.com
+            [AU] Sydney - 1 Gb/s - OVH.com
+            [SG] Singapore - 1 Gb/s - OVH.com
+            [US] Hillsboro - 10 Gb/s - OVH.com
+            [US] Vint Hill - 10 Gb/s - OVH.com
+            [IN] Mumbai - 10 Gb/s - OVH.com
+            */
+
+            // DigitalOcean
+
+            // Linode
+
+            // AWS
+
         ];
 
-        function millisToMinutesAndSeconds(millis) {
+        var sleep = (sn) => {
+            return new Promise(resolve => setTimeout(resolve, sn*1000));
+        }
+
+        var millisToMinutesAndSeconds = (millis) => {
             var minutes = (Math.floor(millis / 60000)).toFixed(0);
             var seconds = ((millis % 60000) / 1000).toFixed(0);
             var ms = ((millis % 6000)/10).toFixed(0);
             return minutes + ":" + (seconds < 10 ? '0' : '') + seconds + '.'+ ms;
         }
         
-        function updateProgress(evt) {
+        var updateProgress = (evt) => {
             if(evt.lengthComputable){
                 var elapsedSec = (new Date() - startTime) / 1000
-                label.innerText = (8 * evt.loaded / 1024 / 1024 / elapsedSec).toFixed(1)
-                label.style = `color:rgb(${elapsedSec * 17 | 0},0,0)`
+                document.getElementById("result").innerText = (8 * evt.loaded / 1024 / 1024 / elapsedSec).toFixed(1)
+                document.getElementById("result").style = `color:rgb(${elapsedSec * 17 | 0},0,0)`
             }
         }
 
-        function primitiveDist(lat1, lon1, lat2, lon2) {
+        var primitiveDist = (lat1, lon1, lat2, lon2) => {
             return Math.abs(lat1 - lat2 + lon1 - lon2)
         }
 
-        var findRegion = function () {
-            if (navigator.geolocation){
+        var checkSpeed = () => {
+            console.log('Check Speed - Latitude: ' + latitude + ' Longitude: ' + longitude);
+            if(latitude != undefined || longitude != undefined){
+                console.log('Latitude: ' + latitude + ' Longitude: ' + longitude);
+                findRegion()
+                console.log('find Latitude: ' + latitude + ' Longitude: ' + longitude);
+            }else{
                 navigator.geolocation.getCurrentPosition((location) => {
-                    document.querySelector('.permission-granted-button').style.display = 'none';
                     latitude = location.coords.latitude
                     longitude = location.coords.longitude
+                    console.log('Latitude: ' + latitude + ' Longitude: ' + longitude);
+                    findRegion()
+                }, errorCallback);
+            }
+        }
 
-            var req = new XMLHttpRequest();
-            req.open("GET", "https://ipapi.co/json/", true);
-            req.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    var data = JSON.parse(this.responseText);
-
+        var findRegion = () => {
+            if((window.location.protocol == "https:" || window.location.protocol == "http:") && navigator.geolocation){
+                if(latitude === undefined || longitude === undefined){
+                    checkSpeed();
+                }else{
                     var minDif = 99999;
-                    var closest;
+                    var closest, siteUrl, flagIcon, countryName, countryCode, testFileName, sponsorName;
 
-                    for (index = 0; index < cities.length; ++index) {
-                        var dif = primitiveDist(data.latitude, data.longitude, cities[index][1], cities[index][2]);
-                        if (dif < minDif) {
-                            closest = index;
-                            minDif = dif;
-                        }
-                    }
-
-                    region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="https://raw.githubusercontent.com/ramazansancar/nicesi-speedtest/master/assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
-                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.1000MB.bin`
-                    checkDownload(fileURL)
-                }, function(error) {
-                    if(error.code === 1){
-                        alert("You can't test without location permission!")
-                    }
-                    console.log('Error! Error code: ' + error.code);         
-                },{timeout:5000});
-            }else{
-                document.querySelector('.permission-granted-button').style.display = 'block';
-                // set latitude and longitude to default values if Geolocation API is not supported
-                latitude = "90.1994";
-                longitude = "38.6270";
-                alert('Geolocation is not supported by this browser!')
-                console.log("Geolocation is not supported by this browser.");
-                var minDif = 99999;
-                    var closest;
-
-                    for (index = 0; index < cities.length; ++index) {
+                    for (index = 0; index < locations.length; ++index) {
+                        //console.log(cities[index])
+                        // Icon Check
+                        //region.innerHTML += '<img src="assets/flags/'+cities[index][4]+'.svg" class="flag">'+cities[index][3]+'<br>';
                         var dif = primitiveDist(latitude, longitude, cities[index][1], cities[index][2]);
                         if (dif < minDif) {
                             closest = index;
@@ -216,35 +292,95 @@
                         }
                     }
 
-                    region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="https://raw.githubusercontent.com/ramazansancar/nicesi-speedtest/master/assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
-                    var fileURL = `https://${cities[closest][0]}-ping.vultr.com/vultr.com.100MB.bin`
-                    checkDownload(fileURL)
+                    siteUrl = locations[closest][0];
+                    flagIcon = locations[closest][4];
+                    countryName = locations[closest][3];
+                    countryCode = locations[closest][4];
+                    testFileName = locations[closest][5];
+                    sponsorName = locations[closest][6];
+                    
+                    document.getElementById("location-flag").src = `assets/flags/${flagIcon}.svg`;
+                    document.getElementById("location-flag").alt = countryName;
+                    document.getElementById("location").innerHTML = `Server Location: <a href="${siteUrl}">${countryName}</a>`;
+
+                    if(sponsorName === "vultr.com"){
+                        document.getElementById("sponsor").innerHTML = `For speed testing, <a href="https://vultr.com">vultr.com</a> servers are used.`;
+                    }else if(sponsorName === "hetzner.com"){
+                        document.getElementById("sponsor").innerHTML = `For speed testing, <a href="https://hetzner.com">hetzner.com</a> servers are used.`;
+                    }else if(sponsorName === "ovh.com"){
+                        document.getElementById("sponsor").innerHTML = `For speed testing, <a href="https://ovh.com">ovh.com</a> servers are used.`;
+                    }else if(sponsorName === "digitalocean.com"){
+                        document.getElementById("sponsor").innerHTML = `For speed testing, <a href="https://digitalocean.com">digitalocean.com</a> servers are used.`;
+                    }else if(sponsorName === "linode.com"){
+                        document.getElementById("sponsor").innerHTML = `For speed testing, <a href="https://linode.com">linode.com</a> servers are used.`;
+                    }else if(sponsorName === "aws.com"){
+                        document.getElementById("sponsor").innerHTML = `For speed testing, <a href="https://aws.com">aws.com</a> servers are used.`;
+                    }
+                    document.getElementById("sponsor").innerHTML += `Flag icons are provided by <a href="https://github.com/lipis/flag-icons">GH:lipis/flag-icons</a>.`;
+
+                    //region.innerHTML = 'Server: <a href="https://'+cities[closest][0]+'-ping.vultr.com/" class"green"><img src="assets/flags/'+cities[closest][4]+'.svg" class="flag">'+cities[closest][3]+'</a>'
+                    var fileURL = `${siteUrl}${testFileName}`
+                    checkDownload(fileURL);
+                }
             }
         }
 
-        var checkDownload = function (fileURL) {
+        var errorCallback = async (error) => {
+            navigator.geolocation.watchPosition(function(position) {
+                console.log("i'm tracking you!");
+            }, async (error) => {
+                if (error.code == error.PERMISSION_DENIED){
+                    console.log("you denied me :-(");
+                    await sleep(2);
+                    if(latitude === undefined || longitude === undefined){
+                        await fetch('https://ipapi.co/json/')
+                        .then(response => response.json())
+                        .then(data => {
+                            latitude = data.latitude
+                            longitude = data.longitude
+                            console.log('Latitude: ' + latitude + ' Longitude: ' + longitude);
+                            checkSpeed();
+                        })
+                        .catch(error => console.error('Error:', error));
+                    }else{
+                        checkSpeed();
+                    }
+                }
+            });
+        };
+
+
+        var checkDownload = async (fileURL) => {
             var request = new XMLHttpRequest();
             request.onprogress = updateProgress;
             request.open('GET', fileURL, true);
             startTime = (new Date());
-            let timer = setInterval(() => second.innerText = millisToMinutesAndSeconds((new Date() - startTime)), 5)
+            let timer = setInterval(() => {
+                document.getElementById("time").innerText = `Time: ${millisToMinutesAndSeconds((new Date() - startTime))}`;
+            }, 5);
             request.onreadystatechange = function () {
+
                 if (request.readyState == 1) {
                     startTime = (new Date());
-                }else if(this.readyState == 4){
-                    label.style = "color:black"
-                    setInterval(() => label.style = "color:red", 1000)
-                    second.innerText = millisToMinutesAndSeconds((new Date() - startTime))
+                }else if(request.readyState == 4){
+                    document.getElementById("result").style = "color:black"
+                    setInterval(() => document.getElementById("result").style = "color:red", 1000)
+                    document.getElementById("time").innerText = `Time: ${millisToMinutesAndSeconds((new Date() - startTime))} (Download Completed)`;
                     clearTimeout(timer);
-                    document.querySelector('.permission-granted-button').style.display = 'block';
+                    document.querySelector('#button').style.display = 'inline';
                 }
             };
 
+            request.onerror = function () {
+                document.getElementById("result").innerHTML = "Server is not responding! Please try again later."
+                document.getElementById("result").style = "color:red"
+                document.querySelector('#button').style.display = 'inline';
+                clearTimeout(timer);
+            };
+
             request.send();
-            var abort = () => {
-                request.abort()
-            }
-            setInterval(abort, 15000)
+            const abort = () => request.abort();
+            await setInterval(abort, 15000);
             
             /*else if (this.readyState == 3){
             //var abort = () => request.abort()
